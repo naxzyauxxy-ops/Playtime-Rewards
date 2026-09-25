@@ -17,7 +17,7 @@ To target a different Purpur version, change `purpurVersion` in `build.gradle`.
 2. Start the server once, then edit `plugins/PlaytimeRewards/config.yml`:
    * swap `gems give %player% <n>` for your gems plugin's real command
    * check that `eco give` matches your economy plugin
-3. `/playtime admin reload`
+3. `/playtimerewards admin reload`
 
 In `purpur.yml`, set `settings.idle-timeout.kick-if-idle: false` so Purpur marks idle players
 AFK instead of kicking them. PlaytimeRewards pauses their playtime while they are AFK.
@@ -43,14 +43,14 @@ Scoreboard line from the screenshot:
 
 | Command | Permission | Default |
 |---|---|---|
-| `/playtime` (`/rewards`, `/pt`) | `playtimerewards.use` | everyone |
-| `/playtime check` | `playtimerewards.check` | everyone |
-| `/playtime check <player>` | `playtimerewards.check.others` | op |
-| `/playtime claim` (claim all ready) | `playtimerewards.claim` | everyone |
-| `/playtime admin reload` | `playtimerewards.admin.reload` | op |
-| `/playtime admin set\|add\|remove <player> <time>` | `playtimerewards.admin.modify` | op |
-| `/playtime admin reset <player> [tier\|all]` | `playtimerewards.admin.reset` | op |
-| `/playtime admin info <player>` | `playtimerewards.admin.info` | op |
+| `/playtimerewards` (aliases `/playtime`, `/rewards`, `/pt`) | `playtimerewards.use` | everyone |
+| `/playtimerewards check` | `playtimerewards.check` | everyone |
+| `/playtimerewards check <player>` | `playtimerewards.check.others` | op |
+| `/playtimerewards claim` (claim all ready) | `playtimerewards.claim` | everyone |
+| `/playtimerewards admin reload` | `playtimerewards.admin.reload` | op |
+| `/playtimerewards admin set\|add\|remove <player> <time>` | `playtimerewards.admin.modify` | op |
+| `/playtimerewards admin reset <player> [tier\|all]` | `playtimerewards.admin.reset` | op |
+| `/playtimerewards admin info <player>` | `playtimerewards.admin.info` | op |
 | — keeps counting while AFK | `playtimerewards.afk.exempt` | nobody |
 | — gated tiers (`require-permission: true`) | `playtimerewards.tier.<id>` | nobody |
 

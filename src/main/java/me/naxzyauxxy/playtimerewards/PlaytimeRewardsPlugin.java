@@ -35,7 +35,7 @@ import java.util.logging.Level;
 
 /**
  * Entry point. Owns every service and the (re)load cycle; services read cached config
- * through the accessors below, which are swapped atomically on /playtime admin reload.
+ * through the accessors below, which are swapped atomically on /playtimerewards admin reload.
  */
 public final class PlaytimeRewardsPlugin extends JavaPlugin {
 
@@ -97,7 +97,7 @@ public final class PlaytimeRewardsPlugin extends JavaPlugin {
         }
 
         // Command
-        PluginCommand command = getCommand("playtime");
+        PluginCommand command = getCommand("playtimerewards");
         if (command != null) {
             PlaytimeCommand executor = new PlaytimeCommand(this);
             command.setExecutor(executor);
@@ -159,7 +159,7 @@ public final class PlaytimeRewardsPlugin extends JavaPlugin {
         this.rewards = newRewards;
     }
 
-    /** /playtime admin reload */
+    /** /playtimerewards admin reload */
     public void reload() {
         loadConfiguration();
         for (Player player : Bukkit.getOnlinePlayers()) {

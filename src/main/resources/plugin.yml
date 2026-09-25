@@ -11,10 +11,11 @@ softdepend:
   - Essentials
 
 commands:
-  playtime:
+  playtimerewards:
     description: Open the playtime rewards menu or manage playtime.
     usage: /<command> [check|claim|admin]
-    aliases: [rewards, pt, playtimerewards]
+    # Remove any alias that clashes with another plugin (e.g. EssentialsX also has /playtime).
+    aliases: [playtime, rewards, pt]
 
 # Every node is namespaced under "playtimerewards." so LuckPerms can grant
 # whole branches with wildcards (e.g. playtimerewards.admin.*).
@@ -36,16 +37,16 @@ permissions:
       playtimerewards.claim: true
       playtimerewards.check: true
   playtimerewards.use:
-    description: Open the /playtime rewards menu.
+    description: Open the /playtimerewards rewards menu.
     default: true
   playtimerewards.claim:
     description: Claim unlocked playtime rewards.
     default: true
   playtimerewards.check:
-    description: See your own playtime in chat (/playtime check).
+    description: See your own playtime in chat (/playtimerewards check).
     default: true
   playtimerewards.check.others:
-    description: See another player's playtime (/playtime check <player>).
+    description: See another player's playtime (/playtimerewards check <player>).
     default: op
   playtimerewards.afk.exempt:
     description: Playtime keeps counting while this player is AFK.
@@ -65,14 +66,14 @@ permissions:
       playtimerewards.admin.reset: true
       playtimerewards.admin.info: true
   playtimerewards.admin.reload:
-    description: /playtime admin reload
+    description: /playtimerewards admin reload
     default: op
   playtimerewards.admin.modify:
-    description: /playtime admin set|add|remove <player> <time>
+    description: /playtimerewards admin set|add|remove <player> <time>
     default: op
   playtimerewards.admin.reset:
-    description: /playtime admin reset <player> [tier|all]
+    description: /playtimerewards admin reset <player> [tier|all]
     default: op
   playtimerewards.admin.info:
-    description: /playtime admin info <player>
+    description: /playtimerewards admin info <player>
     default: op

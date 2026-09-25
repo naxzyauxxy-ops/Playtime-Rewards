@@ -8,7 +8,7 @@
 #  Time values accept any combination of: w (weeks), d, h, m, s
 #     e.g.  30m   |   1d12h   |   2d 3h 15m   |   90s
 #
-#  After editing run:  /playtime admin reload
+#  After editing run:  /playtimerewards admin reload
 # ============================================================================
 
 config-version: 1
@@ -35,7 +35,7 @@ settings:
   notify-when-reward-ready: true
   # Claim rewards automatically the moment they unlock (skips the menu).
   auto-claim: false
-  # Send the "You played ..." chat line when /playtime opens the menu.
+  # Send the "You played ..." chat line when /playtimerewards opens the menu.
   send-playtime-on-open: true
   # Remind players on join that they have unclaimed rewards.
   join-reminder:
@@ -109,8 +109,8 @@ messages:
   prefix: "<yellow><bold>PLAYTIME</bold></yellow> <gray>⊳</gray> "
   playtime-self: "<prefix><gray>You played <yellow><playtime></yellow> on this server so far."
   playtime-other: "<prefix><gray><yellow><target></yellow> played <yellow><target_playtime></yellow> on this server so far."
-  reward-ready: "<prefix><gray>The <yellow><reward></yellow> playtime reward is ready! <yellow><bold><click:run_command:'/playtime'><hover:show_text:'<gray>Open the rewards menu'>CLICK</hover></click></bold></yellow> <gray>to claim it."
-  join-reminder: "<prefix><gray>You have <yellow><ready></yellow> playtime reward(s) waiting. <yellow><bold><click:run_command:'/playtime'>CLICK</click></bold></yellow> <gray>to open."
+  reward-ready: "<prefix><gray>The <yellow><reward></yellow> playtime reward is ready! <yellow><bold><click:run_command:'/playtimerewards'><hover:show_text:'<gray>Open the rewards menu'>CLICK</hover></click></bold></yellow> <gray>to claim it."
+  join-reminder: "<prefix><gray>You have <yellow><ready></yellow> playtime reward(s) waiting. <yellow><bold><click:run_command:'/playtimerewards'>CLICK</click></bold></yellow> <gray>to open."
   reward-claimed: "<prefix><gray>You claimed the <green><reward></green> playtime reward!"
   reward-not-ready: "<prefix><red>You need <remaining> more playtime for this reward!"
   reward-already-claimed: "<prefix><red>You already took this reward."
@@ -138,14 +138,14 @@ messages:
     - "<gray>¦ Claimed tiers: <white><target_claimed_list></white>"
   help:
     - "<prefix><yellow><bold>Commands</bold>"
-    - "<gray>¦ <yellow>/playtime</yellow> - open the rewards menu"
-    - "<gray>¦ <yellow>/playtime check [player]</yellow> - show playtime"
-    - "<gray>¦ <yellow>/playtime claim</yellow> - claim every ready reward"
+    - "<gray>¦ <yellow>/playtimerewards</yellow> - open the rewards menu"
+    - "<gray>¦ <yellow>/playtimerewards check [player]</yellow> - show playtime"
+    - "<gray>¦ <yellow>/playtimerewards claim</yellow> - claim every ready reward"
   admin-help:
-    - "<gray>¦ <red>/playtime admin reload</red>"
-    - "<gray>¦ <red>/playtime admin set|add|remove <player> <time></red>"
-    - "<gray>¦ <red>/playtime admin reset <player> [tier|all]</red>"
-    - "<gray>¦ <red>/playtime admin info <player></red>"
+    - "<gray>¦ <red>/playtimerewards admin reload</red>"
+    - "<gray>¦ <red>/playtimerewards admin set|add|remove <player> <time></red>"
+    - "<gray>¦ <red>/playtimerewards admin reset <player> [tier|all]</red>"
+    - "<gray>¦ <red>/playtimerewards admin info <player></red>"
 
 # ----------------------------------------------------------------------------
 #  Menu - 1:1 layout of the "Playtime | Rewards" screenshots

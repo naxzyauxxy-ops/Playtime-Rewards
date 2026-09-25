@@ -28,13 +28,13 @@ import java.util.stream.Stream;
 
 /**
  * <pre>
- * /playtime                              open menu            playtimerewards.use
- * /playtime check [player]               chat readout         playtimerewards.check(.others)
- * /playtime claim                        claim all ready      playtimerewards.claim
- * /playtime admin reload                                      playtimerewards.admin.reload
- * /playtime admin set|add|remove &lt;p&gt; &lt;t&gt;                     playtimerewards.admin.modify
- * /playtime admin reset &lt;p&gt; [tier|all]                     playtimerewards.admin.reset
- * /playtime admin info &lt;p&gt;                                 playtimerewards.admin.info
+ * /playtimerewards                              open menu            playtimerewards.use
+ * /playtimerewards check [player]               chat readout         playtimerewards.check(.others)
+ * /playtimerewards claim                        claim all ready      playtimerewards.claim
+ * /playtimerewards admin reload                                      playtimerewards.admin.reload
+ * /playtimerewards admin set|add|remove &lt;p&gt; &lt;t&gt;                     playtimerewards.admin.modify
+ * /playtimerewards admin reset &lt;p&gt; [tier|all]                     playtimerewards.admin.reset
+ * /playtimerewards admin info &lt;p&gt;                                 playtimerewards.admin.info
  * </pre>
  */
 public final class PlaytimeCommand implements TabExecutor {
@@ -68,7 +68,7 @@ public final class PlaytimeCommand implements TabExecutor {
             case "admin" -> admin(sender, args);
             case "help" -> help(sender);
             default -> {
-                // "/playtime <player>" shortcut for staff
+                // "/playtimerewards <player>" shortcut for staff
                 if (sender.hasPermission(P_CHECK_OTHERS)) {
                     check(sender, new String[]{"check", args[0]});
                 } else {
