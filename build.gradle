@@ -1,0 +1,52 @@
+plugins {
+    id 'java'
+}
+
+group = 'me.naxzyauxxy'
+version = '1.0.0'
+description = 'Playtime tracking and milestone rewards for Purpur servers'
+
+// Match this to the Purpur build your server runs (client in the screenshots is 1.21.11).
+// Newer Purpur lines only need this string bumped.
+ext {
+    purpurVersion = '1.21.11-R0.1-SNAPSHOT'
+}
+
+repositories {
+    mavenCentral()
+    maven { url = uri('https://repo.purpurmc.org/snapshots') }          // Purpur API
+    maven { url = uri('https://repo.papermc.io/repository/maven-public/') } // Paper/Adventure transitive deps
+    maven { url = uri('https://repo.extendedclip.com/releases/') }       // PlaceholderAPI
+}
+
+dependencies {
+    // Provided by the server at runtime -> compileOnly, nothing is shaded.
+    compileOnly "org.purpurmc.purpur:purpur-api:${purpurVersion}"
+    compileOnly 'me.clip:placeholderapi:2.11.6'
+    compileOnly 'net.luckperms:api:5.4'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 21
+    options.compilerArgs += ['-Xlint:deprecation', '-Xlint:unchecked']
+}
+
+processResources {
+    filteringCharset = 'UTF-8'
+    def props = [version: project.version, description: project.description]
+    inputs.properties(props)
+    filesMatching('plugin.yml') {
+        expand(props)
+    }
+}
+
+jar {
+    archiveFileName = "${rootProject.name}-${project.version}.jar"
+}

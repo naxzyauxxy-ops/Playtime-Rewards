@@ -1,0 +1,78 @@
+name: PlaytimeRewards
+version: '${version}'
+main: me.naxzyauxxy.playtimerewards.PlaytimeRewardsPlugin
+description: '${description}'
+author: NaxzyAuxxy
+api-version: '1.21'
+folia-supported: false
+softdepend:
+  - PlaceholderAPI
+  - LuckPerms
+  - Essentials
+
+commands:
+  playtime:
+    description: Open the playtime rewards menu or manage playtime.
+    usage: /<command> [check|claim|admin]
+    aliases: [rewards, pt, playtimerewards]
+
+# Every node is namespaced under "playtimerewards." so LuckPerms can grant
+# whole branches with wildcards (e.g. playtimerewards.admin.*).
+permissions:
+  playtimerewards.*:
+    description: Every PlaytimeRewards permission.
+    default: false
+    children:
+      playtimerewards.player: true
+      playtimerewards.admin: true
+      playtimerewards.check.others: true
+
+  # ---- Player nodes -------------------------------------------------------
+  playtimerewards.player:
+    description: Bundle of the normal player permissions.
+    default: true
+    children:
+      playtimerewards.use: true
+      playtimerewards.claim: true
+      playtimerewards.check: true
+  playtimerewards.use:
+    description: Open the /playtime rewards menu.
+    default: true
+  playtimerewards.claim:
+    description: Claim unlocked playtime rewards.
+    default: true
+  playtimerewards.check:
+    description: See your own playtime in chat (/playtime check).
+    default: true
+  playtimerewards.check.others:
+    description: See another player's playtime (/playtime check <player>).
+    default: op
+  playtimerewards.afk.exempt:
+    description: Playtime keeps counting while this player is AFK.
+    default: false
+  # Tiers with "require-permission: true" also need playtimerewards.tier.<id>
+  playtimerewards.tier.*:
+    description: Access to every permission-gated reward tier.
+    default: false
+
+  # ---- Admin nodes --------------------------------------------------------
+  playtimerewards.admin:
+    description: All admin sub-commands.
+    default: op
+    children:
+      playtimerewards.admin.reload: true
+      playtimerewards.admin.modify: true
+      playtimerewards.admin.reset: true
+      playtimerewards.admin.info: true
+  playtimerewards.admin.reload:
+    description: /playtime admin reload
+    default: op
+  playtimerewards.admin.modify:
+    description: /playtime admin set|add|remove <player> <time>
+    default: op
+  playtimerewards.admin.reset:
+    description: /playtime admin reset <player> [tier|all]
+    default: op
+  playtimerewards.admin.info:
+    description: /playtime admin info <player>
+    default: op

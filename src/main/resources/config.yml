@@ -1,0 +1,579 @@
+# ============================================================================
+#  PlaytimeRewards - main configuration
+# ============================================================================
+#  All text uses MiniMessage: https://docs.advntr.dev/minimessage/format.html
+#  (<red>, <bold>, <gradient:#ff0000:#00ff00>, <#ff55ff>, <click:...>, ...).
+#  Legacy '&' colour codes are NOT supported anywhere.
+#
+#  Time values accept any combination of: w (weeks), d, h, m, s
+#     e.g.  30m   |   1d12h   |   2d 3h 15m   |   90s
+#
+#  After editing run:  /playtime admin reload
+# ============================================================================
+
+config-version: 1
+
+# ----------------------------------------------------------------------------
+#  General behaviour
+# ----------------------------------------------------------------------------
+settings:
+  # How often (minutes) changed player data is flushed to disk in the background.
+  autosave-interval-minutes: 5
+  # How often (ticks) playtime is accrued. Accrual uses the real wall clock, so
+  # lag spikes never make players lose time. 20 = every second.
+  tracking-interval-ticks: 20
+  # When a player has no saved data yet, seed their playtime from the vanilla
+  # "play_one_minute" statistic (so existing players keep their hours).
+  # NOTE: vanilla stats include AFK time. Set false on a brand-new server.
+  import-vanilla-playtime: true
+  # If a player's data file cannot be read, refuse the login instead of
+  # starting them at 0 (which would overwrite their history on save).
+  kick-on-load-failure: true
+  # Run PlaceholderAPI placeholders inside menu names / lore (if installed).
+  use-placeholderapi-in-menus: true
+  # Tell the player in chat when a reward unlocks.
+  notify-when-reward-ready: true
+  # Claim rewards automatically the moment they unlock (skips the menu).
+  auto-claim: false
+  # Send the "You played ..." chat line when /playtime opens the menu.
+  send-playtime-on-open: true
+  # Remind players on join that they have unclaimed rewards.
+  join-reminder:
+    enabled: true
+    delay-ticks: 60
+
+# ----------------------------------------------------------------------------
+#  AFK handling - playtime is paused while a player is AFK
+# ----------------------------------------------------------------------------
+#  A player counts as AFK if ANY enabled source says so.
+#  Players with playtimerewards.afk.exempt are never paused.
+afk:
+  pause-when-afk: true
+  # Purpur's built-in AFK system (Player#isAfk + PlayerAFKEvent).
+  # Tip: in purpur.yml set  settings.idle-timeout.kick-if-idle: false
+  # so Purpur marks idle players AFK instead of kicking them.
+  use-purpur-afk: true
+  # EssentialsX /afk and auto-AFK (hooked softly, only if installed).
+  use-essentials-afk: true
+  # Built-in idle detector. Seconds without activity before a player is AFK.
+  # 0 disables it (rely on Purpur/Essentials only).
+  idle-timeout-seconds: 300
+  # Head rotation always counts as activity. Enable this to also count plain
+  # movement (off by default so water-stream AFK pools don't bypass it).
+  movement-resets-idle: false
+  # Send the afk-paused / afk-resumed messages below.
+  notify: true
+
+# ----------------------------------------------------------------------------
+#  Time formatting (used by %playtimerewards_time% and the <playtime> tag)
+# ----------------------------------------------------------------------------
+#  Full format output: "1d 20h 49m 29s" (no leading zeros inside a unit).
+time-format:
+  day: "d"
+  hour: "h"
+  minute: "m"
+  second: "s"
+  separator: " "
+  # true  -> "49m 29s" for someone under an hour
+  # false -> "0d 0h 49m 29s" (always all four units)
+  hide-leading-zero-units: true
+  # Shown for "next reward" when every tier has been reached.
+  maxed-out: "Completed"
+
+# ----------------------------------------------------------------------------
+#  Permission rewards
+# ----------------------------------------------------------------------------
+#  If LuckPerms is installed, nodes are added through its API (persistent).
+#  Otherwise this console command is run for each node.
+permissions:
+  fallback-command: "lp user %player% permission set %node% true"
+
+# ----------------------------------------------------------------------------
+#  Sounds (Minecraft sound keys). Set sound to "" to disable one.
+# ----------------------------------------------------------------------------
+sounds:
+  claim:   { sound: "entity.player.levelup",       volume: 1.0, pitch: 1.2 }
+  ready:   { sound: "entity.experience_orb.pickup", volume: 1.0, pitch: 1.0 }
+  refresh: { sound: "ui.button.click",             volume: 0.6, pitch: 1.0 }
+  deny:    { sound: "block.note_block.bass",       volume: 1.0, pitch: 0.6 }
+  page:    { sound: "item.book.page_turn",         volume: 1.0, pitch: 1.0 }
+
+# ----------------------------------------------------------------------------
+#  Chat messages
+# ----------------------------------------------------------------------------
+#  Prefix matches the screenshot:  PLAYTIME ⊳ You played 1d 20h ...
+#  <prefix> inserts it. Leave a message as "" to disable it.
+#  Tags available everywhere: <player> <playtime> <playtime_short> <claimed>
+#  <total> <ready> <next>
+messages:
+  prefix: "<yellow><bold>PLAYTIME</bold></yellow> <gray>⊳</gray> "
+  playtime-self: "<prefix><gray>You played <yellow><playtime></yellow> on this server so far."
+  playtime-other: "<prefix><gray><yellow><target></yellow> played <yellow><target_playtime></yellow> on this server so far."
+  reward-ready: "<prefix><gray>The <yellow><reward></yellow> playtime reward is ready! <yellow><bold><click:run_command:'/playtime'><hover:show_text:'<gray>Open the rewards menu'>CLICK</hover></click></bold></yellow> <gray>to claim it."
+  join-reminder: "<prefix><gray>You have <yellow><ready></yellow> playtime reward(s) waiting. <yellow><bold><click:run_command:'/playtime'>CLICK</click></bold></yellow> <gray>to open."
+  reward-claimed: "<prefix><gray>You claimed the <green><reward></green> playtime reward!"
+  reward-not-ready: "<prefix><red>You need <remaining> more playtime for this reward!"
+  reward-already-claimed: "<prefix><red>You already took this reward."
+  reward-no-permission: "<prefix><red>You don't have access to this reward."
+  claim-all-none: "<prefix><red>You have no rewards ready to claim."
+  claim-all-done: "<prefix><gray>Claimed <green><count></green> reward(s)."
+  afk-paused: "<prefix><gray>You are AFK - your playtime is <red>paused</red>."
+  afk-resumed: "<prefix><gray>Welcome back - your playtime is <green>counting</green> again."
+  data-loading: "<prefix><red>Your playtime data is still loading, try again in a moment."
+  no-permission: "<prefix><red>You don't have permission to do that."
+  player-only: "<prefix><red>Only players can use this."
+  player-not-found: "<prefix><red>Player <white><input></white> has never joined."
+  invalid-time: "<prefix><red>Invalid time <white><input></white>. Use e.g. 1d2h30m."
+  unknown-tier: "<prefix><red>Unknown tier <white><input></white>."
+  reloaded: "<prefix><green>Configuration reloaded <gray>(<count> tiers)</gray>."
+  admin-set: "<prefix><gray>Set <yellow><target></yellow>'s playtime to <yellow><target_playtime></yellow>."
+  admin-add: "<prefix><gray>Added <yellow><amount></yellow> to <yellow><target></yellow> (now <yellow><target_playtime></yellow>)."
+  admin-remove: "<prefix><gray>Removed <yellow><amount></yellow> from <yellow><target></yellow> (now <yellow><target_playtime></yellow>)."
+  admin-reset-all: "<prefix><gray>Cleared all claimed rewards of <yellow><target></yellow>."
+  admin-reset-tier: "<prefix><gray>Cleared tier <yellow><tier></yellow> for <yellow><target></yellow>."
+  admin-info:
+    - "<prefix><yellow><bold><target></bold></yellow>"
+    - "<gray>¦ Playtime: <yellow><target_playtime></yellow>"
+    - "<gray>¦ Claimed: <yellow><target_claimed>/<total></yellow>"
+    - "<gray>¦ Claimed tiers: <white><target_claimed_list></white>"
+  help:
+    - "<prefix><yellow><bold>Commands</bold>"
+    - "<gray>¦ <yellow>/playtime</yellow> - open the rewards menu"
+    - "<gray>¦ <yellow>/playtime check [player]</yellow> - show playtime"
+    - "<gray>¦ <yellow>/playtime claim</yellow> - claim every ready reward"
+  admin-help:
+    - "<gray>¦ <red>/playtime admin reload</red>"
+    - "<gray>¦ <red>/playtime admin set|add|remove <player> <time></red>"
+    - "<gray>¦ <red>/playtime admin reset <player> [tier|all]</red>"
+    - "<gray>¦ <red>/playtime admin info <player></red>"
+
+# ----------------------------------------------------------------------------
+#  Menu - 1:1 layout of the "Playtime | Rewards" screenshots
+# ----------------------------------------------------------------------------
+#  6 rows, row 1 empty, 4 rows x 7 reward slots (28 per page), player head in
+#  the bottom-centre. If you define more tiers than slots, page arrows appear.
+#
+#  Item tags:  <time> tier label ("30m", "2d") | <remaining> "3h 10m"
+#              <tier> tier id | plus every chat tag listed above
+#  A lore line that is exactly "<rewards>" is replaced by the tier's own lore.
+#
+#  custom-model-data: integer (0 = none)  - for resource packs using CMD
+#  item-model: "namespace:key" ("" = none) - 1.21.4+ item_model component
+gui:
+  title: "<dark_gray>✹ Playtime | Rewards"
+  rows: 6
+  reward-slots: [10, 11, 12, 13, 14, 15, 16,
+                 19, 20, 21, 22, 23, 24, 25,
+                 28, 29, 30, 31, 32, 33, 34,
+                 37, 38, 39, 40, 41, 42, 43]
+  # Time between accepted clicks, per viewer (anti spam / anti macro).
+  click-cooldown-ms: 250
+  # Re-render the open menu every N ticks so countdowns tick live. 0 = only on click.
+  auto-refresh-ticks: 0
+  # Screenshot has plain empty slots. Enable to fill them with glass.
+  filler:
+    enabled: false
+    material: BLACK_STAINED_GLASS_PANE
+    name: " "
+
+  states:
+    # Green - already claimed (screenshot: "CLAIMED (30m)")
+    claimed:
+      material: LIME_DYE
+      custom-model-data: 0
+      item-model: ""
+      glow: false
+      name: "<green><bold>CLAIMED</bold> (<time>)"
+      lore:
+        - "<gray>Description"
+        - ""
+        - "<green>Information:"
+        - "<green>¦ <white>You already took"
+        - "<green>¦ <white>this <green>reward</green>."
+        - ""
+        - "<green>Rewards:"
+        - "<rewards>"
+
+    # Unlocked but not taken yet
+    ready:
+      material: YELLOW_DYE
+      custom-model-data: 0
+      item-model: ""
+      glow: true
+      name: "<yellow><bold>READY TO CLAIM</bold> (<time>)"
+      lore:
+        - "<gray>Description"
+        - ""
+        - "<yellow>Information:"
+        - "<yellow>¦ <white>This reward is"
+        - "<yellow>¦ <white>ready to be <yellow>claimed</yellow>!"
+        - ""
+        - "<yellow>Rewards:"
+        - "<rewards>"
+        - ""
+        - "<yellow>⊳ <bold><underlined>CLICK</underlined></bold> To Claim"
+
+    # Red - not reached yet (screenshot: "IN PROGRESS (2d)")
+    locked:
+      material: RED_DYE
+      custom-model-data: 0
+      item-model: ""
+      glow: false
+      name: "<red><bold>IN PROGRESS</bold> (<time>)"
+      lore:
+        - "<gray>Description"
+        - ""
+        - "<red>Information:"
+        - "<red>¦ <white>You need <red><remaining></red> more"
+        - "<red>¦ <white>playtime for this <red>reward</red>!"
+        - ""
+        - "<red>Rewards:"
+        - "<rewards>"
+        - ""
+        - "<red>⊳ <bold><underlined>CLICK</underlined></bold> To Refresh"
+
+    # Reached, but the tier has require-permission: true and player lacks it
+    restricted:
+      material: GRAY_DYE
+      custom-model-data: 0
+      item-model: ""
+      glow: false
+      name: "<dark_gray><bold>LOCKED</bold> (<time>)"
+      lore:
+        - "<gray>Description"
+        - ""
+        - "<dark_gray>Information:"
+        - "<dark_gray>¦ <white>You don't have access"
+        - "<dark_gray>¦ <white>to this <dark_gray>reward</dark_gray>."
+        - ""
+        - "<dark_gray>Rewards:"
+        - "<rewards>"
+
+  # Player head, bottom centre (screenshot: "YOUR PLAYTIME")
+  info-item:
+    slot: 49
+    material: PLAYER_HEAD      # PLAYER_HEAD shows the viewer's own skin
+    custom-model-data: 0
+    item-model: ""
+    glow: false
+    name: "<yellow><bold>YOUR PLAYTIME"
+    lore:
+      - "<gray>Description"
+      - ""
+      - "<yellow>Information:"
+      - "<yellow>¦ <white>You played <yellow><playtime_short></yellow>"
+      - "<yellow>¦ <white>on this server so far."
+      - ""
+      - "<yellow>Progress:"
+      - "<yellow>¦ <white>Claimed: <yellow><claimed>/<total></yellow>"
+      - "<yellow>¦ <white>Ready to claim: <yellow><ready></yellow>"
+      - "<yellow>¦ <white>Next reward in: <yellow><next></yellow>"
+      - ""
+      - "<yellow>⊳ <bold><underlined>CLICK</underlined></bold> To Refresh"
+
+  previous-page:
+    slot: 45
+    material: ARROW
+    custom-model-data: 0
+    item-model: ""
+    glow: false
+    name: "<yellow><bold>PREVIOUS PAGE"
+    lore:
+      - "<gray>Page <white><page></white>/<white><pages></white>"
+  next-page:
+    slot: 53
+    material: ARROW
+    custom-model-data: 0
+    item-model: ""
+    glow: false
+    name: "<yellow><bold>NEXT PAGE"
+    lore:
+      - "<gray>Page <white><page></white>/<white><pages></white>"
+
+# ----------------------------------------------------------------------------
+#  Reward tiers - unlimited, sorted automatically by time
+# ----------------------------------------------------------------------------
+#  The key (e.g. "30m") is the tier ID stored in claim history.
+#  Don't rename an ID once players have claimed it.
+#
+#  time:               playtime needed
+#  display:            optional label for <time> (defaults to the time, e.g. "1d 12h")
+#  require-permission: true -> also needs playtimerewards.tier.<id>
+#  lore:               lines shown under "Rewards:" in the menu
+#  actions:            run on claim, top to bottom. Prefixes:
+#                        [console] cmd      - console command (default if no prefix)
+#                        [player] cmd       - run as the player
+#                        [message] text     - MiniMessage to the player
+#                        [broadcast] text   - MiniMessage to everyone
+#                      Placeholders: %player% %uuid% %tier% %time%
+#  items:              items given directly (overflow drops at their feet)
+#                        material, amount, name, lore, custom-model-data,
+#                        item-model, glow, enchantments: { sharpness: 5 }
+#  permissions:        permission nodes granted permanently
+#
+#  The defaults recreate the 28 tiers from the screenshots: 30m -> $100,000 +
+#  10 gems, ... 2d -> $3,500,000 + 50 gems. "gems give" is a placeholder - swap
+#  it for your gems plugin's real command.
+tiers:
+  "30m":
+    time: 30m
+    require-permission: false
+    lore:
+      - "<white>- <green>$100,000"
+      - "<white>- <light_purple>10x <bold>GEMS"
+    actions:
+      - "[console] eco give %player% 100000"
+      - "[console] gems give %player% 10"
+  "1h":
+    time: 1h
+    require-permission: false
+    lore:
+      - "<white>- <green>$150,000"
+      - "<white>- <light_purple>10x <bold>GEMS"
+    actions:
+      - "[console] eco give %player% 150000"
+      - "[console] gems give %player% 10"
+  "2h":
+    time: 2h
+    require-permission: false
+    lore:
+      - "<white>- <green>$250,000"
+      - "<white>- <light_purple>15x <bold>GEMS"
+    actions:
+      - "[console] eco give %player% 250000"
+      - "[console] gems give %player% 15"
+  "3h":
+    time: 3h
+    require-permission: false
+    lore:
+      - "<white>- <green>$400,000"
+      - "<white>- <light_purple>15x <bold>GEMS"
+    actions:
+      - "[console] eco give %player% 400000"
+      - "[console] gems give %player% 15"
+  "5h":
+    time: 5h
+    require-permission: false
+    lore:
+      - "<white>- <green>$600,000"
+      - "<white>- <light_purple>20x <bold>GEMS"
+    actions:
+      - "[console] eco give %player% 600000"
+      - "[console] gems give %player% 20"
+  "8h":
+    time: 8h
+    require-permission: false
+    lore:
+      - "<white>- <green>$850,000"
+      - "<white>- <light_purple>20x <bold>GEMS"
+    actions:
+      - "[console] eco give %player% 850000"
+      - "[console] gems give %player% 20"
+  "12h":
+    time: 12h
+    require-permission: false
+    lore:
+      - "<white>- <green>$1,200,000"
+      - "<white>- <light_purple>25x <bold>GEMS"
+    actions:
+      - "[console] eco give %player% 1200000"
+      - "[console] gems give %player% 25"
+  "18h":
+    time: 18h
+    require-permission: false
+    lore:
+      - "<white>- <green>$1,600,000"
+      - "<white>- <light_purple>25x <bold>GEMS"
+    actions:
+      - "[console] eco give %player% 1600000"
+      - "[console] gems give %player% 25"
+  "1d":
+    time: 1d
+    require-permission: false
+    lore:
+      - "<white>- <green>$2,000,000"
+      - "<white>- <light_purple>30x <bold>GEMS"
+    actions:
+      - "[console] eco give %player% 2000000"
+      - "[console] gems give %player% 30"
+  "1d12h":
+    time: 1d12h
+    require-permission: false
+    lore:
+      - "<white>- <green>$2,750,000"
+      - "<white>- <light_purple>40x <bold>GEMS"
+    actions:
+      - "[console] eco give %player% 2750000"
+      - "[console] gems give %player% 40"
+  "2d":
+    time: 2d
+    require-permission: false
+    lore:
+      - "<white>- <green>$3,500,000"
+      - "<white>- <light_purple>50x <bold>GEMS"
+    actions:
+      - "[console] eco give %player% 3500000"
+      - "[console] gems give %player% 50"
+  "3d":
+    time: 3d
+    require-permission: false
+    lore:
+      - "<white>- <green>$4,500,000"
+      - "<white>- <light_purple>60x <bold>GEMS"
+    actions:
+      - "[console] eco give %player% 4500000"
+      - "[console] gems give %player% 60"
+  "4d":
+    time: 4d
+    require-permission: false
+    lore:
+      - "<white>- <green>$5,500,000"
+      - "<white>- <light_purple>70x <bold>GEMS"
+    actions:
+      - "[console] eco give %player% 5500000"
+      - "[console] gems give %player% 70"
+  "5d":
+    time: 5d
+    require-permission: false
+    lore:
+      - "<white>- <green>$6,500,000"
+      - "<white>- <light_purple>80x <bold>GEMS"
+    actions:
+      - "[console] eco give %player% 6500000"
+      - "[console] gems give %player% 80"
+  "6d":
+    time: 6d
+    require-permission: false
+    lore:
+      - "<white>- <green>$7,500,000"
+      - "<white>- <light_purple>90x <bold>GEMS"
+    actions:
+      - "[console] eco give %player% 7500000"
+      - "[console] gems give %player% 90"
+  "7d":
+    time: 7d
+    require-permission: false
+    lore:
+      - "<white>- <green>$10,000,000"
+      - "<white>- <light_purple>100x <bold>GEMS"
+      - "<white>- <aqua>3x Diamond Block"
+    actions:
+      - "[console] eco give %player% 10000000"
+      - "[console] gems give %player% 100"
+      - "[broadcast] <yellow><bold>PLAYTIME</bold></yellow> <gray>⊳ <yellow>%player%</yellow> reached <yellow>7 days</yellow> of playtime!"
+    # Example: direct item reward
+    items:
+      - material: DIAMOND_BLOCK
+        amount: 3
+  "10d":
+    time: 10d
+    require-permission: false
+    lore:
+      - "<white>- <green>$12,500,000"
+      - "<white>- <light_purple>125x <bold>GEMS"
+    actions:
+      - "[console] eco give %player% 12500000"
+      - "[console] gems give %player% 125"
+  "14d":
+    time: 14d
+    require-permission: false
+    lore:
+      - "<white>- <green>$15,000,000"
+      - "<white>- <light_purple>150x <bold>GEMS"
+    actions:
+      - "[console] eco give %player% 15000000"
+      - "[console] gems give %player% 150"
+  "18d":
+    time: 18d
+    require-permission: false
+    lore:
+      - "<white>- <green>$17,500,000"
+      - "<white>- <light_purple>175x <bold>GEMS"
+    actions:
+      - "[console] eco give %player% 17500000"
+      - "[console] gems give %player% 175"
+  "21d":
+    time: 21d
+    require-permission: false
+    lore:
+      - "<white>- <green>$20,000,000"
+      - "<white>- <light_purple>200x <bold>GEMS"
+    actions:
+      - "[console] eco give %player% 20000000"
+      - "[console] gems give %player% 200"
+  "25d":
+    time: 25d
+    require-permission: false
+    lore:
+      - "<white>- <green>$25,000,000"
+      - "<white>- <light_purple>250x <bold>GEMS"
+    actions:
+      - "[console] eco give %player% 25000000"
+      - "[console] gems give %player% 250"
+  "30d":
+    time: 30d
+    require-permission: false
+    lore:
+      - "<white>- <green>$30,000,000"
+      - "<white>- <light_purple>300x <bold>GEMS"
+    actions:
+      - "[console] eco give %player% 30000000"
+      - "[console] gems give %player% 300"
+  "40d":
+    time: 40d
+    require-permission: false
+    lore:
+      - "<white>- <green>$40,000,000"
+      - "<white>- <light_purple>350x <bold>GEMS"
+    actions:
+      - "[console] eco give %player% 40000000"
+      - "[console] gems give %player% 350"
+  "50d":
+    time: 50d
+    require-permission: false
+    lore:
+      - "<white>- <green>$50,000,000"
+      - "<white>- <light_purple>400x <bold>GEMS"
+    actions:
+      - "[console] eco give %player% 50000000"
+      - "[console] gems give %player% 400"
+  "60d":
+    time: 60d
+    require-permission: false
+    lore:
+      - "<white>- <green>$60,000,000"
+      - "<white>- <light_purple>450x <bold>GEMS"
+    actions:
+      - "[console] eco give %player% 60000000"
+      - "[console] gems give %player% 450"
+  "75d":
+    time: 75d
+    require-permission: false
+    lore:
+      - "<white>- <green>$75,000,000"
+      - "<white>- <light_purple>500x <bold>GEMS"
+    actions:
+      - "[console] eco give %player% 75000000"
+      - "[console] gems give %player% 500"
+  "90d":
+    time: 90d
+    require-permission: false
+    lore:
+      - "<white>- <green>$90,000,000"
+      - "<white>- <light_purple>750x <bold>GEMS"
+    actions:
+      - "[console] eco give %player% 90000000"
+      - "[console] gems give %player% 750"
+  "100d":
+    time: 100d
+    require-permission: false
+    lore:
+      - "<white>- <green>$100,000,000"
+      - "<white>- <light_purple>1000x <bold>GEMS"
+    actions:
+      - "[console] eco give %player% 100000000"
+      - "[console] gems give %player% 1000"
+      - "[broadcast] <yellow><bold>PLAYTIME</bold></yellow> <gray>⊳ <yellow>%player%</yellow> reached <gradient:#ffff55:#ff55ff><bold>100 DAYS</bold></gradient> of playtime!"
+    # Example: permanent permission node (via LuckPerms API when installed)
+    permissions:
+      - "playtimerewards.veteran"
